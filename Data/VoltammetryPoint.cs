@@ -1,14 +1,13 @@
-﻿namespace ElinsDataParser.Data
-{
-    public struct VoltammetryPoint
-    {
-        /// <summary> Время, С </summary>
-        public double Time { get; set; }
+﻿namespace ElinsDataParser.Data;
 
-        /// <summary> Потенциал, В </summary>
-        public double Potential { get; set; }
-        
-        /// <summary> Ток, А </summary>
-        public double Current { get; set; }
-    }
+public class VoltammetryPoint
+{
+    /// <summary> Время, С </summary>
+    public double Time { get; set; }
+
+    /// <summary> Потенциал, В </summary>
+    public double Potential { get; set; }
+
+    /// <summary> Ток, А </summary>
+    public double Current { get; set; }
 }

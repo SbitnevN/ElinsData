@@ -2,88 +2,86 @@
 using ElinsDataParser.Extensions;
 using System.Runtime.CompilerServices;
 
-namespace ElinsDataParser.Elins
+namespace ElinsDataParser.Elins;
+
+public partial class ElinsParser : ParserBase
 {
-    public partial class ElinsParser : ParserBase
+    internal override ElinsData Parse(BufferStream stream, ElinsData data, Filter filter = Filter.All)
     {
-        internal override ElinsData Parse(BufferStream stream, ElinsData data, Filter filter = Filter.All)
-        {
-            Span<char> buffer = stackalloc char[256];
+        Span<char> buffer = stackalloc char[256];
 
-            int count;
-            while ((count = stream.ReadLine(buffer)) > 0)
+        int count;
+        while ((count = stream.ReadLine(buffer)) > 0)
+        {
+            if (count < 2)
+                continue;
+
+            switch (buffer.Slice(0, 2))
             {
-                if (count < 2)
-                    continue;
+                case Tags.UserSample when filter.HasFlag(Filter.Metadata) && string.IsNullOrEmpty(data.Name):
+                    data.Name = buffer.Slice(2).Trim().ToString();
+                    break;
 
-                switch (buffer.Slice(0, 2))
-                {
-                    case Tags.UserSample when filter.HasFlag(Filter.Metadata) && string.IsNullOrEmpty(data.Name):
-                        data.Name = buffer.Slice(2).Trim().ToString();
-                        break;
+                case Tags.VoltammetryCount when filter.HasFlag(Filter.Voltammetry):
+                    ParseVoltammetryCount(buffer, data.LastStep);
+                    break;
 
-                    case Tags.VoltammetryCount when filter.HasFlag(Filter.Voltammetry):
-                        ParseVoltammetryCount(buffer, data.LastStep);
-                        break;
+                case Tags.ImpedanceCount when filter.HasFlag(Filter.Impedance):
+                    ParseImpedanceCount(buffer, data.LastStep);
+                    break;
 
-                    case Tags.ImpedanceCount when filter.HasFlag(Filter.Impedance):
-                        ParseImpedanceCount(buffer, data.LastStep);
-                        break;
+                case Tags.VoltammetryPoint when filter.HasFlag(Filter.Voltammetry):
+                    ParseVoltammetryPoint(buffer, data);
+                    break;
 
-                    case Tags.VoltammetryPoint when filter.HasFlag(Filter.Voltammetry):
-                        ParseVoltammetryPoint(buffer, data);
-                        break;
+                case Tags.ImpedancePoint when filter.HasFlag(Filter.Impedance):
+                    ParseImpedancePoint(buffer, data);
+                    break;
 
-                    case Tags.ImpedancePoint when filter.HasFlag(Filter.Impedance):
-                        ParseImpedancePoint(buffer, data);
-                        break;
-
-                    case Tags.Step when filter.HasFlag(Filter.Impedance | Filter.Voltammetry):
-                        data.Steps.Add(new Step());
-                        break;
-                }
+                case Tags.Step when filter.HasFlag(Filter.Impedance | Filter.Voltammetry):
+                    data.Steps.Add(new Step());
+                    break;
             }
-
-            return data;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void ParseVoltammetryCount(ReadOnlySpan<char> buffer, Step step)
-        {
-            buffer.ReadToken();
-            step.ResizeVoltammetry(buffer.ReadInt());
-        }
+        return data;
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void ParseImpedanceCount(ReadOnlySpan<char> buffer, Step step)
-        {
-            buffer.ReadToken();
-            step.ResizeImpedance(buffer.ReadInt());
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private void ParseVoltammetryCount(ReadOnlySpan<char> buffer, Step step)
+    {
+        buffer.ReadToken();
+        step.ResizeVoltammetry(buffer.ReadInt());
+    }
 
-        private void ParseVoltammetryPoint(ReadOnlySpan<char> buffer, ElinsData data)
-        {
-            VoltammetryPoint voltammetryPoint = new VoltammetryPoint();
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private void ParseImpedanceCount(ReadOnlySpan<char> buffer, Step step)
+    {
+        buffer.ReadToken();
+        step.ResizeImpedance(buffer.ReadInt());
+    }
 
-            buffer.ReadToken();
-            voltammetryPoint.Time = buffer.ReadDouble();
-            voltammetryPoint.Potential = buffer.ReadDouble();
-            voltammetryPoint.Current = buffer.ReadDouble();
+    private void ParseVoltammetryPoint(ReadOnlySpan<char> buffer, ElinsData data)
+    {
+        VoltammetryPoint voltammetryPoint = new VoltammetryPoint();
 
-            data.LastStep.VoltammetryData.Add(voltammetryPoint);
-        }
+        buffer.ReadToken();
+        voltammetryPoint.Time = buffer.ReadDouble();
+        voltammetryPoint.Potential = buffer.ReadDouble();
+        voltammetryPoint.Current = buffer.ReadDouble();
 
-        private void ParseImpedancePoint(ReadOnlySpan<char> buffer, ElinsData data)
-        {
-            ImpedancePoint impedancePoint = new ImpedancePoint();
+        data.LastStep.VoltammetryData.Add(voltammetryPoint);
+    }
 
-            buffer.ReadToken();
-            impedancePoint.Frequency = buffer.ReadDouble();
-            impedancePoint.ImpedanceReal = buffer.ReadDouble();
-            impedancePoint.ImpedanceImaginary = buffer.ReadDouble();
+    private void ParseImpedancePoint(ReadOnlySpan<char> buffer, ElinsData data)
+    {
+        ImpedancePoint impedancePoint = new ImpedancePoint();
 
-            data.LastStep.ImpedanceData.Add(impedancePoint);
-            data.Frequencies.Add(impedancePoint.Frequency);
-        }
+        buffer.ReadToken();
+        impedancePoint.Frequency = buffer.ReadDouble();
+        impedancePoint.ImpedanceReal = buffer.ReadDouble();
+        impedancePoint.ImpedanceImaginary = buffer.ReadDouble();
+
+        data.LastStep.ImpedanceData.Add(impedancePoint);
     }
 }
