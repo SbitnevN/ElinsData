@@ -1,6 +1,6 @@
-﻿namespace ElinsDataParser.Elins;
+﻿namespace ElinsData.Reader;
 
-internal static class Tags
+internal static class ElinsTags
 {
     /// <summary>Block Number — номер блока данных.</summary>
     public const string BlockNumber = "bn";

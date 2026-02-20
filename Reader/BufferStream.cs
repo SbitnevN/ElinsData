@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace ElinsDataParser;
+namespace ElinsData.Reader;
 
 public class BufferStream : StreamReader
 {
@@ -17,7 +17,7 @@ public class BufferStream : StreamReader
         buffer.Clear();
 
         int count = 0;
-        while (Peek() > 0) // Бутылочная боль и узкая голова
+        while (Peek() > 0)
         {
             char value = (char)Read();
 
@@ -36,7 +36,7 @@ public class BufferStream : StreamReader
 
         int count = 0;
         Memory<char> memory = new char[1];
-        while (await ReadAsync(memory) > 0) // Бутылочная боль и узкая голова
+        while (await ReadAsync(memory) > 0)
         {
             buffer.Span[count++] = memory.Span[0];
             if (memory.Span[0] == '\n')

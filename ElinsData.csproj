@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MottSchottkyAnalizer.Math\MottSchottkyAnalizer.Math.csproj" />
+  </ItemGroup>
+
 </Project>

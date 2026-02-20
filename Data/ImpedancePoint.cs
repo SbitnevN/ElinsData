@@ -1,8 +1,10 @@
-﻿namespace ElinsDataParser.Data;
+﻿using ElinsData.Extensions;
 
-public class ImpedancePoint
+namespace ElinsData.Data;
+
+public class ImpedancePoint : IImpedancePoint
 {
-    private double? _capacitance;
+    private ImpedancePoint() { }
 
     /// <summary>Частота измерения, Гц.</summary>
     public double Frequency { get; set; }
@@ -17,15 +19,18 @@ public class ImpedancePoint
     public double Potential { get; set; }
 
     /// <summary>Ёмкость, Ф/м2</summary>
-    public double Capacitance => _capacitance ??= CalculateCapacitance();
+    public double Capacitance { get; set; }
 
-    private double CalculateCapacitance()
-    {
-        return -1.0d / (CalculateAngularFrequency() * ImpedanceImaginary);
-    }
+    public int Step { get; set; }
 
-    private double CalculateAngularFrequency()
+    public static IImpedancePoint Create(ReadOnlySpan<char> line, int step)
     {
-        return 2 * Math.PI * Frequency;
+        return new ImpedancePoint
+        {
+            Frequency = line.ReadDouble(),
+            ImpedanceReal = line.ReadDouble(),
+            ImpedanceImaginary = line.ReadDouble(),
+            Step = step
+        };
     }
 }

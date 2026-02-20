@@ -1,6 +1,6 @@
-﻿namespace ElinsDataParser.Text;
+﻿namespace ElinsData.Reader;
 
-internal static class Tags
+internal static class TextTags
 {
     /// <summary>Step — номер шага в эксперименте.</summary>
     public const string Step = "Шаг";
