@@ -1,2 +1,2 @@
 # ElinsData
-Парсер для файлов .edf (elins data file)  и образованных от них .txt
+Reader для файлов .edf (elins data file) и образованных от них .txt
