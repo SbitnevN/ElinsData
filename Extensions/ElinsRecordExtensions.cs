@@ -18,7 +18,7 @@ public static class ElinsRecordExtensions
 
     public static bool TryFillPotential(this ElinsRecord data, double start, double end, double step)
     {
-        IEnumerator<ImpedancePoint> enumerator = data.ImpedancePoints.GetEnumerator();
+        IEnumerator<IImpedancePoint> enumerator = data.ImpedancePoints.GetEnumerator();
         for (double current = start; current < end; current += step)
         {
             if (!enumerator.MoveNext())
