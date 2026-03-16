@@ -6,5 +6,5 @@ public interface IImpedancePoint : IPoint
     double Frequency { get; set; }
     double ImpedanceImaginary { get; set; }
     double ImpedanceReal { get; set; }
-    double Potential { get; set; }
+    IStepPotential PotentialStep { get; set; }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace ElinsData.Extensions;
+namespace ElinsData.Reader;
 
 internal static class SpanExtensions
 {

@@ -1,4 +1,4 @@
-﻿using ElinsData.Extensions;
+﻿using ElinsData.Reader;
 
 namespace ElinsData.Data;
 
@@ -15,22 +15,26 @@ public class ImpedancePoint : IImpedancePoint
     /// <summary>Мнимая часть импеданса, Ом.</summary>
     public double ImpedanceImaginary { get; set; }
 
-    /// <summary>Потенциал, В.</summary>
-    public double Potential { get; set; }
-
     /// <summary>Ёмкость, Ф/м2</summary>
     public double Capacitance { get; set; }
 
-    public int Step { get; set; }
+    /// <summary>Потенциал, В.</summary>
+    public IStepPotential PotentialStep { get; set; } = null!;
 
-    public static IImpedancePoint Create(ReadOnlySpan<char> line, int step)
+    public int Step
+    {
+        get => PotentialStep.Step;
+        set => PotentialStep.Step = value;
+    }
+
+    public static IImpedancePoint Create(ReadOnlySpan<char> line, ElinsRecord data)
     {
         return new ImpedancePoint
         {
             Frequency = line.ReadDouble(),
             ImpedanceReal = line.ReadDouble(),
             ImpedanceImaginary = line.ReadDouble(),
-            Step = step
+            PotentialStep = data.StepPotentials.Last()
         };
     }
 }

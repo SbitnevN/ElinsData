@@ -1,4 +1,4 @@
-﻿using ElinsData.Extensions;
+﻿using ElinsData.Reader;
 
 namespace ElinsData.Data;
 
@@ -18,14 +18,14 @@ public class VoltammetryPoint : IVoltammetryPoint
     /// <summary>Шаг №</summary>
     public int Step { get; set; }
 
-    public static IVoltammetryPoint Create(ReadOnlySpan<char> line, int step)
+    public static IVoltammetryPoint Create(ReadOnlySpan<char> line, ElinsRecord data)
     {
         return new VoltammetryPoint
         {
             Time = line.ReadDouble(),
             Potential = line.ReadDouble(),
             Current = line.ReadDouble(),
-            Step = step
+            Step = data.Steps
         };
     }
 }
