@@ -1,5 +1,4 @@
 ﻿using ElinsData.Data;
-using ElinsData.Extensions;
 
 namespace ElinsData.Reader;
 
@@ -31,6 +30,10 @@ public partial class ElinsReader : ReaderBase
 
                 case ElinsTags.Step when filter.HasFlag(Filter.Impedance) || filter.HasFlag(Filter.Voltammetry):
                     data.Steps++;
+                    data.StepPotentials.Add(new StepPotential
+                    {
+                        Step = data.Steps
+                    });
                     break;
             }
         }
@@ -48,7 +51,7 @@ public partial class ElinsReader : ReaderBase
     private void ReadImpedancePoint(ReadOnlySpan<char> buffer, ElinsRecord data)
     {
         buffer.ReadToken();
-        IImpedancePoint impedancePoint = ImpedancePoint.Create(buffer, data.Steps);
+        IImpedancePoint impedancePoint = ImpedancePoint.Create(buffer, data.StepPotentials.Last());
         data.ImpedancePoints.Add(impedancePoint);
     }
 }
