@@ -22,4 +22,5 @@ public class ElinsRecord
 
     public ICollection<IImpedancePoint> ImpedancePoints { get; } = [];
     public ICollection<IVoltammetryPoint> VoltammetryPoints { get; } = [];
+    public ICollection<IStepPotential> StepPotentials { get; } = [];
 }

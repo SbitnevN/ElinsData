@@ -1,7 +1,6 @@
-﻿using ElinsData.Data;
-using System.Text;
+﻿using System.Text;
 
-namespace ElinsData.Extensions;
+namespace ElinsData.Data;
 
 public static class ElinsRecordExtensions
 {
