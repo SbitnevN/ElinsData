@@ -44,7 +44,7 @@ public partial class ElinsReader : ReaderBase
     private void ReadVoltammetryPoint(ReadOnlySpan<char> buffer, ElinsRecord data)
     {
         buffer.ReadToken();
-        IVoltammetryPoint voltammetryPoint = VoltammetryPoint.Create(buffer, data.Steps);
+        IVoltammetryPoint voltammetryPoint = VoltammetryPoint.Create(buffer, data);
         data.VoltammetryPoints.Add(voltammetryPoint);
     }
 
