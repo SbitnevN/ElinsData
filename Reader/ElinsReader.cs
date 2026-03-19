@@ -29,7 +29,11 @@ public partial class ElinsReader : ReaderBase
                     break;
 
                 case ElinsTags.Step when filter.HasFlag(Filter.Impedance) || filter.HasFlag(Filter.Voltammetry):
-                    data.AppendStep();
+                    data.Steps++;
+                    data.StepPotentials.Add(new StepPotential
+                    {
+                        Step = data.Steps
+                    });
                     break;
             }
         }
@@ -47,7 +51,7 @@ public partial class ElinsReader : ReaderBase
     private void ReadImpedancePoint(ReadOnlySpan<char> buffer, ElinsRecord data)
     {
         buffer.ReadToken();
-        IImpedancePoint impedancePoint = ImpedancePoint.Create(buffer, data);
+        IImpedancePoint impedancePoint = ImpedancePoint.Create(buffer, data.StepPotentials.Last());
         data.ImpedancePoints.Add(impedancePoint);
     }
 }

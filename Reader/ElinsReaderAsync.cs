@@ -29,7 +29,11 @@ public partial class ElinsReader
                     break;
 
                 case ElinsTags.Step when filter.HasFlag(Filter.Impedance | Filter.Voltammetry):
-                    data.AppendStep();
+                    data.Steps++;
+                    data.StepPotentials.Add(new StepPotential
+                    {
+                        Step = data.Steps,
+                    });
                     break;
             }
         }

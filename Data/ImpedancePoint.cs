@@ -19,12 +19,12 @@ public class ImpedancePoint : IImpedancePoint
     public double Capacitance { get; set; }
 
     /// <summary>Потенциал, В.</summary>
-    public IStepPotential PotentialStep { get; set; } = null!;
+    public IStepPotential Potential { get; set; } = null!;
 
     public int Step
     {
-        get => PotentialStep.Step;
-        set => PotentialStep.Step = value;
+        get => Potential.Step;
+        set => Potential.Step = value;
     }
 
     public static IImpedancePoint Create(ReadOnlySpan<char> line, ElinsRecord data)
@@ -34,7 +34,7 @@ public class ImpedancePoint : IImpedancePoint
             Frequency = line.ReadDouble(),
             ImpedanceReal = line.ReadDouble(),
             ImpedanceImaginary = line.ReadDouble(),
-            PotentialStep = data.StepPotentials.Last()
+            Potential = data.StepPotentials.Last()
         };
     }
 }

@@ -1,5 +1,4 @@
-﻿using MottSchottkyAnalizer.Math;
-using System.Text;
+﻿using System.Text;
 
 namespace ElinsData.Data;
 
@@ -18,6 +17,14 @@ public static class ElinsRecordExtensions
 
     public static bool TryFillPotential(this ElinsRecord data, double start, double end, double step)
     {
+        IEnumerator<IImpedancePoint> enumerator = data.ImpedancePoints.GetEnumerator();
+        for (double current = start; current < end; current += step)
+        {
+            if (!enumerator.MoveNext())
+                return true;
+
+            enumerator.Current.Potential = current;
+        }
         return false;
     }
 
@@ -37,12 +44,11 @@ public static class ElinsRecordExtensions
             .Append("Частота, Гц".PadRight(columnWidth))
             .Append("Re, Ом".PadRight(columnWidth))
             .Append("Im, Ом".PadRight(columnWidth))
-            .Append("C, Ф/м2".PadRight(columnWidth))
-            .AppendLine();
+            .Append("C, Ф/м2".PadRight(columnWidth));
 
         foreach (ImpedancePoint point in data.ImpedancePoints)
         {
-            csvBuilder.Append(Normalize(point.PotentialStep.Potential).PadRight(columnWidth))
+            csvBuilder.Append(Normalize(point.Potential).PadRight(columnWidth))
                 .Append(Normalize(point.Frequency).PadRight(columnWidth))
                 .Append(Normalize(point.ImpedanceReal).PadRight(columnWidth))
                 .Append(Normalize(point.ImpedanceImaginary).PadRight(columnWidth))
@@ -50,15 +56,6 @@ public static class ElinsRecordExtensions
         }
 
         return csvBuilder.ToString();
-    }
-
-    internal static void AppendStep(this ElinsRecord data)
-    {
-        data.Steps++;
-        data.StepPotentials.Add(new StepPotential
-        {
-            Step = data.Steps
-        });
     }
 
     private static string Normalize(double value)

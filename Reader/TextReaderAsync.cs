@@ -11,9 +11,11 @@ public partial class TextReader  // ToDo рефак!
         while (await stream.ReadLineAsync(buffer) > 0)
         {
             if (buffer.Span.StartsWith(TextTags.Block) && filter.HasFlag(Filter.Metadata) && string.IsNullOrEmpty(data.Name))
+            {
                 ReadBlock(data, buffer.Span);
+            }
             else if (buffer.Span.StartsWith(TextTags.Cycle))
-                data.AppendStep();
+                data.Steps++;
             else if (buffer.Span.StartsWith(TextTags.Time) && filter.HasFlag(Filter.Voltammetry))
                 await ReadStepAsync(data.VoltammetryPoints, data, stream, VoltammetryPoint.Create);
             else if (buffer.Span.StartsWith(TextTags.Frequency) && filter.HasFlag(Filter.Impedance))

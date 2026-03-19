@@ -12,12 +12,15 @@ public partial class TextReader : ReaderBase  // ToDo рефак!
         {
             if (buffer.StartsWith(TextTags.Block) && filter.HasFlag(Filter.Metadata) && string.IsNullOrEmpty(data.Name))
                 ReadBlock(data, buffer);
-            else if (buffer.StartsWith(TextTags.Cycle))
-                data.AppendStep();
-            else if (buffer.StartsWith(TextTags.Time) && filter.HasFlag(Filter.Voltammetry))
-                ReadStep(data.VoltammetryPoints, data, stream, VoltammetryPoint.Create);
-            else if (buffer.StartsWith(TextTags.Frequency) && filter.HasFlag(Filter.Impedance))
-                ReadStep(data.ImpedancePoints, data, stream, ImpedancePoint.Create);
+            else
+                if (buffer.StartsWith(TextTags.Cycle))
+                    data.Steps++;
+                else
+                    if (buffer.StartsWith(TextTags.Time) && filter.HasFlag(Filter.Voltammetry))
+                        ReadStep(data.VoltammetryPoints, data, stream, VoltammetryPoint.Create);
+                    else
+                        if (buffer.StartsWith(TextTags.Frequency) && filter.HasFlag(Filter.Impedance))
+                            ReadStep(data.ImpedancePoints, data, stream, ImpedancePoint.Create);
 
         }
         return data;
